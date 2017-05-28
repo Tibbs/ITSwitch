@@ -263,6 +263,7 @@ static CGFloat const kDisabledOpacity = 0.5f;
 }
 
 - (void)mouseDragged:(NSEvent *)theEvent {
+    if (!self.active) return;
     if (!self.isEnabled) return;
 
     self.dragged = YES;
