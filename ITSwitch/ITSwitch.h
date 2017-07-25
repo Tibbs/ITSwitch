@@ -29,4 +29,6 @@ IB_DESIGNABLE
  */
 @property (nonatomic, strong) IBInspectable NSColor *disabledBorderColor;
 
+@property (nonatomic, strong) IBInspectable NSString *userDefaultBindingKey;
+
 @end
