@@ -43,6 +43,8 @@ static CGFloat const kDisabledOpacity = 0.5f;
 @interface ITSwitch () {
     __weak id _target;
     SEL _action;
+    
+    BOOL checkIsAlreadySet;
 }
 
 @property (nonatomic, getter = isActive) BOOL active;
@@ -347,6 +349,10 @@ static CGFloat const kDisabledOpacity = 0.5f;
 		_checked = checked;
         [self propagateValue:@(checked) forBinding:@"checked"];
     }
+    if (self.userDefaultBindingKey) {
+        [[NSUserDefaults standardUserDefaults] setBool:checked forKey:self.userDefaultBindingKey];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
     
     [self reloadLayer];
 }
@@ -379,6 +385,21 @@ static CGFloat const kDisabledOpacity = 0.5f;
     [super setEnabled:enabled];
     [self reloadLayer];
 }
+
+- (void)setUserDefaultBindingKey:(NSString*) key {
+    _userDefaultBindingKey = key;
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:key]) {
+        BOOL checkedTemp = [[NSUserDefaults standardUserDefaults] boolForKey:key];
+        self.checked = checkedTemp;
+    } else {
+        [[NSUserDefaults standardUserDefaults] setBool:self.checked forKey:key];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+    
+    [self reloadLayer];
+}
+
+
 
 // -----------------------------------
 #pragma mark - Helpers
