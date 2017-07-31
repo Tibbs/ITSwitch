@@ -142,6 +142,11 @@ static CGFloat const kDisabledOpacity = 0.5f;
     [self reloadLayer];
 }
 
+- (void) dealloc {
+    if (self.userDefaultBindingKey) {
+        [[NSUserDefaults standardUserDefaults] removeObserver:self forKeyPath:self.userDefaultBindingKey];
+    }
+}
 
 
 // ----------------------------------------------------
@@ -350,8 +355,16 @@ static CGFloat const kDisabledOpacity = 0.5f;
         [self propagateValue:@(checked) forBinding:@"checked"];
     }
     if (self.userDefaultBindingKey) {
-        [[NSUserDefaults standardUserDefaults] setBool:checked forKey:self.userDefaultBindingKey];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:self.userDefaultBindingKey]) {
+            BOOL checkedInDefault = [[NSUserDefaults standardUserDefaults] boolForKey:self.userDefaultBindingKey];
+            if (checkedInDefault != checked) {
+                [[NSUserDefaults standardUserDefaults] setBool:checked forKey:self.userDefaultBindingKey];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
+        } else {
+            [[NSUserDefaults standardUserDefaults] setBool:checked forKey:self.userDefaultBindingKey];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
     }
     
     [self reloadLayer];
@@ -396,9 +409,25 @@ static CGFloat const kDisabledOpacity = 0.5f;
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
     
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:key
+                                               options:NSKeyValueObservingOptionNew
+                                               context:NULL];
+
+    
     [self reloadLayer];
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+
+    if ([keyPath isEqualToString:self.userDefaultBindingKey]) {
+        BOOL checkedInDefault = [[NSUserDefaults standardUserDefaults] boolForKey:self.userDefaultBindingKey];
+        if (checkedInDefault != self.checked) {
+            self.checked = checkedInDefault;
+        }
+        NSLog(@"keyPath: %@",keyPath);
+    }
+}
 
 
 // -----------------------------------
