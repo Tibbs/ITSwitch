@@ -354,19 +354,24 @@ static CGFloat const kDisabledOpacity = 0.5f;
 		_checked = checked;
         [self propagateValue:@(checked) forBinding:@"checked"];
     }
+
     if (self.userDefaultBindingKey) {
         if ([[NSUserDefaults standardUserDefaults] objectForKey:self.userDefaultBindingKey]) {
             BOOL checkedInDefault = [[NSUserDefaults standardUserDefaults] boolForKey:self.userDefaultBindingKey];
             if (checkedInDefault != checked) {
+
+
                 [[NSUserDefaults standardUserDefaults] setBool:checked forKey:self.userDefaultBindingKey];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
         } else {
+
             [[NSUserDefaults standardUserDefaults] setBool:checked forKey:self.userDefaultBindingKey];
             [[NSUserDefaults standardUserDefaults] synchronize];
         }
     }
-    
+    NSLog(@"ITSwitch setChecked: %@, %@", self.userDefaultBindingKey,self.checked?@"YES":@"NO" );
+
     [self reloadLayer];
 }
 
@@ -414,7 +419,8 @@ static CGFloat const kDisabledOpacity = 0.5f;
                                                options:NSKeyValueObservingOptionNew
                                                context:NULL];
 
-    
+    NSLog(@"ITSwitch setUserDefaultBindingKey: %@, %@", self.userDefaultBindingKey,self.checked?@"YES":@"NO" );
+
     [self reloadLayer];
 }
 
@@ -425,8 +431,9 @@ static CGFloat const kDisabledOpacity = 0.5f;
         if (checkedInDefault != self.checked) {
             self.checked = checkedInDefault;
         }
-        NSLog(@"keyPath: %@",keyPath);
     }
+    NSLog(@"ITSwitch observeValueForKeyPath: %@, %@", self.userDefaultBindingKey,self.checked?@"YES":@"NO" );
+
 }
 
 
