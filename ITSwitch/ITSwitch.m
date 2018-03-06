@@ -78,25 +78,23 @@ static CGFloat const kDisabledOpacity = 0.5f;
 - (id)initWithCoder:(NSCoder *)coder {
     self = [super initWithCoder:coder];
     if (!self) return nil;
-    
     [self setUp];
-    
     return self;
 }
 
 - (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
     if (!self) return nil;
-    
     [self setUp];
-    
     return self;
 }
 
 - (void)setUp {
     // The Switch is enabled per default
     self.enabled = YES;
-    
+    [ITSwitch exposeBinding:@"checked"];
+    [ITSwitch exposeBinding:@"userDefaultBindingKey"];
+
     // Set up the layer hierarchy
     [self setUpLayers];
 }
@@ -359,18 +357,18 @@ static CGFloat const kDisabledOpacity = 0.5f;
         if ([[NSUserDefaults standardUserDefaults] objectForKey:self.userDefaultBindingKey]) {
             BOOL checkedInDefault = [[NSUserDefaults standardUserDefaults] boolForKey:self.userDefaultBindingKey];
             if (checkedInDefault != checked) {
-
-
                 [[NSUserDefaults standardUserDefaults] setBool:checked forKey:self.userDefaultBindingKey];
                 [[NSUserDefaults standardUserDefaults] synchronize];
             }
         } else {
-
-            [[NSUserDefaults standardUserDefaults] setBool:checked forKey:self.userDefaultBindingKey];
-            [[NSUserDefaults standardUserDefaults] synchronize];
+            if (checked) {
+                // only set defaults if not 0 to avoid settings before the app sets its default values at first launch
+                [[NSUserDefaults standardUserDefaults] setBool:checked forKey:self.userDefaultBindingKey];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+            }
         }
     }
-    NSLog(@"ITSwitch setChecked: %@, %@", self.userDefaultBindingKey,self.checked?@"YES":@"NO" );
+    //NSLog(@"ITSwitch setChecked: %@, %@", self.userDefaultBindingKey,self.checked?@"YES":@"NO" );
 
     [self reloadLayer];
 }
@@ -410,8 +408,11 @@ static CGFloat const kDisabledOpacity = 0.5f;
         BOOL checkedTemp = [[NSUserDefaults standardUserDefaults] boolForKey:key];
         self.checked = checkedTemp;
     } else {
-        [[NSUserDefaults standardUserDefaults] setBool:self.checked forKey:key];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+        if (self.checked) {
+            // only set defaults if not 0 to avoid settings before the app sets its default values at first launch
+            [[NSUserDefaults standardUserDefaults] setBool:self.checked forKey:key];
+            [[NSUserDefaults standardUserDefaults] synchronize];
+        }
     }
     
     [[NSUserDefaults standardUserDefaults] addObserver:self
@@ -419,7 +420,7 @@ static CGFloat const kDisabledOpacity = 0.5f;
                                                options:NSKeyValueObservingOptionNew
                                                context:NULL];
 
-    NSLog(@"ITSwitch setUserDefaultBindingKey: %@, %@", self.userDefaultBindingKey,self.checked?@"YES":@"NO" );
+    //NSLog(@"ITSwitch setUserDefaultBindingKey: %@, %@", self.userDefaultBindingKey,self.checked?@"YES":@"NO" );
 
     [self reloadLayer];
 }
@@ -432,7 +433,7 @@ static CGFloat const kDisabledOpacity = 0.5f;
             self.checked = checkedInDefault;
         }
     }
-    NSLog(@"ITSwitch observeValueForKeyPath: %@, %@", self.userDefaultBindingKey,self.checked?@"YES":@"NO" );
+    //NSLog(@"ITSwitch observeValueForKeyPath: %@, %@", self.userDefaultBindingKey,self.checked?@"YES":@"NO" );
 
 }
 
