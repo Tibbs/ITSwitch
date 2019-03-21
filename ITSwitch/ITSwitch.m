@@ -31,10 +31,10 @@ static CGFloat const kDisabledOpacity = 0.5f;
 
 #define kKnobBackgroundColor [NSColor colorWithCalibratedWhite:1.f alpha:1.f]
 
-#define kDisabledBorderColor [NSColor colorWithCalibratedWhite:0.f alpha:0.2f]
+#define kDisabledBorderColor [[NSColor labelColor] colorWithAlphaComponent:0.2f]
 #define kDisabledBackgroundColor [NSColor clearColor]
 #define kDefaultTintColor [NSColor colorWithCalibratedRed:0.27f green:0.86f blue:0.36f alpha:1.f]
-#define kInactiveBackgroundColor [NSColor colorWithCalibratedWhite:0 alpha:0.3]
+#define kInactiveBackgroundColor [[NSColor labelColor] colorWithAlphaComponent:0.2f]
 
 // ---------------------------------------------------------------------------------------
 #pragma mark - Interface Extension
