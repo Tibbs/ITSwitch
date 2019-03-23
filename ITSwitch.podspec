@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "ITSwitch"
-  s.version      = "1.0"
+  s.version      = "1.2"
   s.summary      = "ITSwitch is a replica of UISwitch for Mac OS X"
   s.description  =  "ITSwitch is a simple and lightweight replica of iOS 7 UISwitch for Mac OS X."
   s.homepage     = "https://github.com/iluuu1994/ITSwitch"
